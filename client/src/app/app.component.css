@@ -1,0 +1,10 @@
+li
+{
+    display:inline;
+}
+
+div.Sprite
+{
+    display: flex;
+    justify-content: center;
+}
