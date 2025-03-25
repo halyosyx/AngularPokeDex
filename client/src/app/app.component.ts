@@ -21,9 +21,14 @@ export class AppComponent implements OnInit
 
   count: number = 0;
 
-  pokemonSprite: any;
-  sprite: any;
+  pokemonData: any;
   pokemonTypes: any;
+  sprite: any;
+  pokemonDescription: any;
+
+  pokemonSpecies: any;
+  isComplete: boolean = true;
+
 
   ngOnInit(): void {
       this.https.get('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=151').subscribe(
@@ -40,31 +45,44 @@ export class AppComponent implements OnInit
           })
   }
 
-  Initialize(): void 
-  {
-    
-  }
-
   IteratePokemon(next: boolean): void
   {
     this.count += next ? 1 : -1;
     if (this.count < 0) this.count = 0;
     if(this.count > this.pokemons.length - 1) this.count = this.pokemons.length - 1
 
-    this.GetPokemonData(this.count);
+    if(this.isComplete)
+    {
+      this.GetPokemonData(this.count);
+    }
   }
   
   GetPokemonData(id: number): void
   {
-    this.https.get(this.pokemons[id].url).subscribe(
+    this.isComplete = false;
+
+    this.https.get(`https://pokeapi.co/api/v2/pokemon-species/${id + 1}`).subscribe(
       {
-        next: response => this.pokemonSprite = response,
+        next: response => this.pokemonSpecies = response,
         error: err => console.log(err),
         complete: () => 
           {
-              this.pokemon = (id + 1) + " " + this.pokemons[id].name;
-              this.sprite = this.pokemonSprite.sprites.front_default;
-              this.pokemonTypes = this.pokemonSprite.types;
+            this.pokemonDescription = this.pokemonSpecies.flavor_text_entries[2].flavor_text;
+          }
+      })
+  
+    this.https.get(this.pokemons[id].url).subscribe(
+      {
+        next: response => this.pokemonData = response,
+        error: err => console.log(err),
+        complete: () => 
+          {
+              let pokemonName = this.pokemons[id].name;
+              this.pokemon = String(pokemonName).charAt(0).toUpperCase() + String(pokemonName).slice(1);
+              this.sprite = this.pokemonData.sprites.front_default;
+              this.pokemonTypes = this.pokemonData.types;
+
+              this.isComplete = true;
             }
       })
   }
