@@ -24,11 +24,11 @@ export class AppComponent implements OnInit
   pokemonData: any;
   pokemonTypes: any;
   sprite: any;
-  pokemonDescription: any;
+  pokemonDescription: string = '';
 
   pokemonSpecies: any;
   isComplete: boolean = true;
-
+  audio: any = new Audio();
 
   ngOnInit(): void {
       this.https.get('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=151').subscribe(
@@ -56,11 +56,11 @@ export class AppComponent implements OnInit
       this.GetPokemonData(this.count);
     }
   }
-  
+
   GetPokemonData(id: number): void
   {
     this.isComplete = false;
-
+    
     this.https.get(`https://pokeapi.co/api/v2/pokemon-species/${id + 1}`).subscribe(
       {
         next: response => this.pokemonSpecies = response,
@@ -69,20 +69,27 @@ export class AppComponent implements OnInit
           {
             this.pokemonDescription = this.pokemonSpecies.flavor_text_entries[2].flavor_text;
           }
-      })
-  
-    this.https.get(this.pokemons[id].url).subscribe(
-      {
-        next: response => this.pokemonData = response,
-        error: err => console.log(err),
-        complete: () => 
+        })
+        
+        this.https.get(this.pokemons[id].url).subscribe(
           {
+            next: response => this.pokemonData = response,
+            error: err => console.log(err),
+            complete: () => 
+            {
               let pokemonName = this.pokemons[id].name;
-              this.pokemon = String(pokemonName).charAt(0).toUpperCase() + String(pokemonName).slice(1);
-              this.sprite = this.pokemonData.sprites.front_default;
-              this.pokemonTypes = this.pokemonData.types;
 
+              this.pokemon = String(pokemonName).toUpperCase();
+              this.pokemonTypes = this.pokemonData.types;
               this.isComplete = true;
+
+              //NOTE: Might be better to cache an array of png.
+              this.sprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/transparent/${id + 1}.png`;
+              this.audio.src = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id + 1}.ogg`;
+              
+              this.audio.load();
+              this.audio.play();
+              this.audio.volume = 0.5;
             }
       })
   }

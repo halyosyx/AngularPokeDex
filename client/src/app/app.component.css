@@ -39,10 +39,10 @@ img.pokemonSprite
     width: 100%;
     height: auto;
 
-    left: 24%;
-    top: 35%;
+    left: 22%;
+    top: 30%;
 
-    max-width: 17%;
+    max-width: 20%;
     max-height: auto;  
 }
 
@@ -50,26 +50,30 @@ div.pokemonName
 {
     position: absolute;
     text-align: center;
+    font-size: clamp(0.02rem, 1.25vw, 1rem);
 
-    left: 20%;
+    left: 21%;
     top: 78%;
 
-    width: 120px;
-    max-width: 100%;
-
-    height: auto;
-    max-height: auto;
+    width: 10%;
+    height: 5%;
 }
 
 div.pokemonDescription
 {
     position: absolute;
-    font-size: 14px;
-    right: 19.5%;
-    top: 32.5%;
+    overflow: hidden;
+    font-size: clamp(0.3rem, 1vw, 0.75rem);
 
-    width: 230px;
-    height: 80px;
+    right: 19.5%;
+    top: 34%;
+    width: 23%;
+    height: 15%;
+}
+
+div.PokemonType
+{
+    position: absolute;
 }
 
 div.NextButton
@@ -85,8 +89,6 @@ div.NextButton
 
 div.PrevButton
 {
-    position: absolute;
-
     position: absolute;
     background-color: rgba(0, 0, 0, 0);
     color: rgba(0, 0, 0, 0);

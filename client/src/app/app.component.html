@@ -4,21 +4,12 @@
     <img src="../assets/Pokedex.png" class="pokeDex">
     <img src={{sprite}} class="pokemonSprite">
     <div class="pokemonName">{{pokemon}}</div>
-    <div class="pokemonDescription">{{pokemonDescription}}</div>
+    <div class="pokemonDescription">{{pokemonDescription.replace("", " ").toUpperCase()}} </div>
     <div class="PrevButton" (click)="IteratePokemon(false)"> </div>
     <div class="NextButton" (click)="IteratePokemon(true)"> </div>
-</div>
 
-<div class="text-center">
-
-    <br>
     @for (pokemonType of pokemonTypes; track $index) 
     {
-        <li>{{pokemonType.type.name}} </li>
+        <div class="PokemonType">{{pokemonType.type.name.toUpperCase()}}</div>
     }
-    <br>
-
-
-
-    <br>
 </div>
