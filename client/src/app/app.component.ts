@@ -1,7 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, inject, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap, takeUntil } from 'rxjs';
+import { DataService } from './service/data.service';
+import { PokemonApiData, Result } from './interface/pokemon.interface';
+import { Pokemon, Species, Sprites } from './interface/individualpokemon.interface';
+import { PokemonSpecies } from './interface/individualPokemonSpecies.interface';
 
 @Component({
   selector: 'app-root',
@@ -14,83 +18,77 @@ import { Subscription } from 'rxjs';
 export class AppComponent implements OnInit
 {
   title = 'Pokedex';
+  private pokeApiData = inject(DataService);
+  pokeApi: PokemonApiData | undefined;
+  pokemonResults: Array<Result> | undefined = [];
+  pokemon: Pokemon | undefined;
+  pokemonSpecies: PokemonSpecies | undefined;
+  pokemonSpriteUrl: string | undefined;
+  pokemonDescription: string | undefined;
+  pokemonName: string = '';
+
   https = inject(HttpClient);
-  pokeApi: any;
-  pokemons: any;
-  pokemon: string = '';
 
   count: number = 0;
 
-  pokemonData: any;
-  pokemonTypes: any;
-  sprite: any;
-  pokemonDescription: string = '';
-
-  pokemonSpecies: any;
   isComplete: boolean = true;
-  audio: any = new Audio();
+
 
   ngOnInit(): void {
-      this.https.get('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=151').subscribe(
-        {
-          next: response => this.pokeApi = response,
-          error: err => console.log(err),
-          complete: () => 
-            {
-              this.pokemons = this.pokeApi.results;
-              this.pokemon = this.pokemons[0].name;
-              this.GetPokemonData(0);
-              console.log("Initialized Data");
-            }
-          })
+
+    this.LoadPokeApi();
   }
 
-  IteratePokemon(next: boolean): void
+  LoadPokeApi()
   {
-    this.count += next ? 1 : -1;
-    if (this.count < 0) this.count = 0;
-    if(this.count > this.pokemons.length - 1) this.count = this.pokemons.length - 1
+    this.pokeApiData.GetPost().subscribe({
+      next: pokeApi => this.pokeApi = pokeApi,
+      complete: () => 
+        {
+          this.pokemonResults = this.pokeApi?.results;
+          this.GetIndividualPokemon(2);
+        }
+      }) 
+  }
+  
 
+  GetIndividualPokemon(index: number)
+  {    
+    if (this.pokemonResults == undefined) {
+      return;
+    }
+
+    this.pokemonName = this.pokemonResults[index].name;
+
+    this.pokeApiData.GetPokemonApi(this.pokemonResults[index]).pipe(switchMap((pokemonResult) => this.pokeApiData.GetPokemonSpecies(pokemonResult.species)))
+    .subscribe(
+      {
+        next: result => this.pokemonSpecies = result,
+        complete: () => 
+        {
+          this.pokemonDescription = this.pokemonSpecies?.flavor_text_entries[0].flavor_text;
+        }
+      })
+
+    this.pokeApiData.GetPokemonApi(this.pokemonResults[index])
+    .subscribe(
+      {
+        next: result => this.pokemon = result,
+        complete: () => 
+        {
+          this.pokemonSpriteUrl = this.pokemon?.sprites.versions['generation-i'].yellow.front_transparent;
+        }
+      })
+  }
+  
+  IteratePokemon(next: boolean): void
+  { 
     if(this.isComplete)
     {
-      this.GetPokemonData(this.count);
+      this.count += next ? 1 : -1;
+      if (this.count < 0) this.count = 0;
+      //if(this.count > this.pokemonResults.length - 1) this.count = this.pokemonResults.length - 1
+      this.GetIndividualPokemon(this.count);
     }
-  }
-
-  GetPokemonData(id: number): void
-  {
-    this.isComplete = false;
-    
-    this.https.get(`https://pokeapi.co/api/v2/pokemon-species/${id + 1}`).subscribe(
-      {
-        next: response => this.pokemonSpecies = response,
-        error: err => console.log(err),
-        complete: () => 
-          {
-            this.pokemonDescription = this.pokemonSpecies.flavor_text_entries[2].flavor_text;
-          }
-        })
-        
-        this.https.get(this.pokemons[id].url).subscribe(
-          {
-            next: response => this.pokemonData = response,
-            error: err => console.log(err),
-            complete: () => 
-            {
-              let pokemonName = this.pokemons[id].name;
-
-              this.pokemon = String(pokemonName).toUpperCase();
-              this.pokemonTypes = this.pokemonData.types;
-              this.isComplete = true;
-
-              //NOTE: Might be better to cache an array of png.
-              this.sprite = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/transparent/${id + 1}.png`;
-              this.audio.src = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id + 1}.ogg`;
-              
-              this.audio.load();
-              this.audio.play();
-              this.audio.volume = 0.5;
-            }
-      })
   }
 }

@@ -46,7 +46,7 @@ img.pokemonSprite
     max-height: auto;  
 }
 
-div.pokemonName
+.pokemonName
 {
     position: absolute;
     text-align: center;

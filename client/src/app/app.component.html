@@ -2,14 +2,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <div class="container">
     <img src="../assets/Pokedex.png" class="pokeDex">
-    <img src={{sprite}} class="pokemonSprite">
-    <div class="pokemonName">{{pokemon}}</div>
-    <div class="pokemonDescription">{{pokemonDescription.replace("", " ").toUpperCase()}} </div>
+    <img src={{pokemonSpriteUrl}} class="pokemonSprite">
+    <div class="pokemonName">{{pokemonName}}</div>
+    <div class="pokemonDescription">{{pokemonDescription}} </div>
     <div class="PrevButton" (click)="IteratePokemon(false)"> </div>
     <div class="NextButton" (click)="IteratePokemon(true)"> </div>
-
-    @for (pokemonType of pokemonTypes; track $index) 
-    {
-        <div class="PokemonType">{{pokemonType.type.name.toUpperCase()}}</div>
-    }
 </div>
