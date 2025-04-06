@@ -1,20 +1,25 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Subscription, switchMap, takeUntil } from 'rxjs';
+import { Component, inject, OnChanges, OnDestroy, OnInit} from '@angular/core';
+import { Subscription, switchMap} from 'rxjs';
 import { DataService } from './service/data.service';
 import { PokemonApiData, Result } from './interface/pokemon.interface';
-import { Pokemon, Species, Sprites } from './interface/individualpokemon.interface';
+import { Pokemon} from './interface/individualpokemon.interface';
 import { PokemonSpecies } from './interface/individualPokemonSpecies.interface';
-import { SearchBarComponent } from "./components/search-bar/search-bar.component";
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
- 
+import { NgSelectModule } from '@ng-select/ng-select'; 
+import { NgFor, NgIf } from "@angular/common";
+import {NgClickOutsideDirective } from 'ng-click-outside2';
+import { SearchFilter } from './classes/search-filter';
+
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [ReactiveFormsModule, SearchBarComponent],
+  imports: [ReactiveFormsModule, 
+            NgClickOutsideDirective, 
+            NgSelectModule,
+            SearchFilter,
+            NgFor, 
+            NgIf],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
@@ -42,22 +47,20 @@ export class AppComponent implements OnInit, OnDestroy
   isComplete: boolean = true;
 
 
+  //------------------------ TODO: CREATE SEPERATE COMPONENT FOR SEARCH BAR -----------------------//
+
+  showDropdown = false;
+
   searchValue = '';
-  searchForm = this.formBuilder.group({searchValue: ''})
+  searchForm = this.formBuilder.group(
+    {
+      selectedName: [],
+      searchValue: ''
+    })
 
-  pokemonResultsSubscription: Subscription | undefined;
+  selectedPokemon = '';
 
-  ngOnInit(): void {
-    this.loadPokeApi();
-  }
-
-  ngOnDestroy(): void {
-
-    this.pokemonResultsSubscription?.unsubscribe();
-
-  }
-
-  //Write a more typescript centric way of filtering through the list of pokemon to get the result. Maybe use maps for this one
+//Write a more typescript centric way of filtering through the list of pokemon to get the result. Maybe use maps for this one
   //TODO: Move this functionality to a search component
   onSearchSubmit()
   {
@@ -79,6 +82,35 @@ export class AppComponent implements OnInit, OnDestroy
     }
 
     this.invalidEntry(`"${searchedName}" does not exist in this pokeDex database!`);
+  }
+
+  toggleDropdown(show: boolean)
+  {
+    this.showDropdown = show;
+  }
+
+  selectPokemonName(value: string)
+  {
+    this.searchForm.patchValue({searchValue: value});
+    this.onSearchSubmit();
+  }
+
+  getSearchValue()
+  {
+    return this.searchForm.value.searchValue;
+  }
+
+//--------------------------------------------------------------------------------------------
+  pokemonResultsSubscription: Subscription | undefined;
+
+  ngOnInit(): void {
+    this.loadPokeApi();
+  }
+
+  ngOnDestroy(): void {
+
+    this.pokemonResultsSubscription?.unsubscribe();
+
   }
 
   loadPokeApi()

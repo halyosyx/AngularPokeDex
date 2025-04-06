@@ -13,9 +13,13 @@
     <div class="NextButton" (click)="iteratePokemon(true)"> </div>
     <form [formGroup]="searchForm" 
           (ngSubmit)="onSearchSubmit()">
-        <input type="text" class="searchFormBar" placeholder="Search..." formControlName="searchValue">
+        <input (clickOutside)="toggleDropdown(false)" type="text" (click)="toggleDropdown(true)" class="searchFormBar" placeholder="Search..." formControlName="searchValue">
+        <div *ngIf="showDropdown"  class="pokemon-dropdown">
+            <div (click)="selectPokemonName(pokemon.name.toUpperCase())" class="pokemon-dropdown-contents"
+                 *ngFor="let pokemon of pokemonResults |searchFilter:getSearchValue()">
+                {{pokemon.name.toUpperCase()}}
+            </div>
+            </div>
     </form>
 
 </div>
-
-<app-search-bar></app-search-bar>

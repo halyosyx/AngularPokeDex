@@ -1,3 +1,4 @@
+
 div
 {
     font-family: 'pokemonFont';
@@ -8,6 +9,35 @@ div
 {
     text-align: center;
     font-size: 40px;
+}
+
+.pokemon-dropdown
+{
+    position: absolute;
+    z-index: 2;;
+    width: 14%;
+    height: 100px;
+    right: 29.5%;
+    top: 84%;
+    max-height: 300px;
+    border-style: solid;
+    border-color: black;
+    background: #939c41;
+    overflow-y: auto;
+    scrollbar-color: #3e421c #939c41;
+    border-radius: 2px;
+}
+
+.pokemon-dropdown-contents
+{
+    font-size: 12px;
+    padding-left: 4px;
+    user-select: none;
+}
+
+.pokemon-dropdown-contents:hover
+{
+    background: gray;
 }
 
 .generation

@@ -5,6 +5,3 @@ import { SearchBarComponent } from './app/components/search-bar/search-bar.compo
 
 bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));
-
-  bootstrapApplication(SearchBarComponent, appConfig)
-  .catch((err) => console.error(err));
