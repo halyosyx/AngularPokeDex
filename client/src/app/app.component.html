@@ -1,10 +1,21 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="title">{{title}}</div>
+<div class="generation">{{generation}}</div>
 <div class="container">
     <img src="../assets/Pokedex.png" class="pokeDex">
     <img src={{pokemonSpriteUrl}} class="pokemonSprite">
-    <div class="pokemonName">{{pokemonName}}</div>
-    <div class="pokemonDescription">{{pokemonDescription}} </div>
-    <div class="PrevButton" (click)="IteratePokemon(false)"> </div>
-    <div class="NextButton" (click)="IteratePokemon(true)"> </div>
+    <div class="pokemonName">{{pokemonName.toUpperCase()}}</div>
+    <div class="pokemonDescription">{{pokemonDescription.replaceAll('', '').toUpperCase()}} </div>
+    <div class="pokedexNumber">#{{pokeIndex + 1}}</div>
+    <div class="pokemonType">{{pokemonType.toUpperCase()}}</div>
+    <div class="PrevButton" (click)="iteratePokemon(false)"> </div>
+    <div class="NextButton" (click)="iteratePokemon(true)"> </div>
+    <form [formGroup]="searchForm" 
+          (ngSubmit)="onSearchSubmit()">
+        <input type="text" class="searchFormBar" placeholder="Search..." formControlName="searchValue">
+    </form>
+
 </div>
+
+<app-search-bar></app-search-bar>
