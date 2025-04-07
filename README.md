@@ -5,6 +5,14 @@ Pokedex Entries is a fun and simple way to showcase pokedex entires somewhat sim
 protrayed in the show. This project was made for the sole purpose of learning, applying, and practicing
 my web development skills. The image used for the PokeDex UI was personally made using Aseprite!
 
+## How To Use
+```
+$ git clone https://github.com/halyosyx/AngularPokeDex.git
+$ cd client
+$ npm install
+$ ng serve
+```
+
 ## Highlights
 ### Iterating through PokeDex using the D-Pad
 ![Pokedex Iteration](https://github.com/user-attachments/assets/efeea7f1-248c-4305-af98-37b6eadcd2fb)
