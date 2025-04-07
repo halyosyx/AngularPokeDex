@@ -38,6 +38,6 @@ my web development skills. The image used for the PokeDex UI was personally made
 - Add other generation pokemons
 - Add Pokemon Sound
 
-#Credits
-API: [P](https://pokeapi.co/)
+# Credits
+API: [PokeApi](https://pokeapi.co/)
 
